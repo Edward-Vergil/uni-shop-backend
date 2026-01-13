@@ -1,100 +1,159 @@
-Uni-Shop Backend
+UNI Shop Backend
 
-Uni-Shop Backend — серверная часть учебного проекта интернет-магазина. В основе используется стек: Node.js, TypeScript, Express, Prisma ORM и база данных PostgreSQL.
+Серверная часть проекта конструктора интернет-магазинов, аналогичного Shopify. Реализует управление пользователями, товарами, категориями, брендами, страницами магазина, публичное API, а также mock-интеграцию платежей. Проект выполнен как учебный.
 
-Описание функциональности
-1. Аутентификация и авторизация
+Технологии
+Node.js (TypeScript)
+Express
+PostgreSQL
+Prisma ORM
+JWT (аутентификация и авторизация)
+REST API
+Реализованные модули по спринтам
 
-Реализована регистрация и вход пользователей с использованием JWT-токенов. Поддерживается проверка прав доступа.
+Спринт 1
+Регистрация и авторизация пользователей
+JWT-аутентификация и контроль ролей
+Роли: user и admin
+Администрирование пользователей (просмотр и изменение роли)
+Подключение PostgreSQL и Prisma
+Настройка конфигурации через .env
 
-Функции:
+Спринт 2
+Управление брендами (CRUD)
+Управление категориями (CRUD + дерево категорий)
+Управление товарами (CRUD + soft delete)
+Mock-загрузка изображений (endpoint без реального хранилища)
 
-Регистрация нового пользователя: POST /api/auth/register
+Спринт 3
+Управление страницами магазина (JSON-структура, CRUD, публикация)
+Система шаблонов (хранение шаблонов и их выдача)
+Публичное API для рендеринга магазина
 
-Вход и получение JWT-токена: POST /api/auth/login
+Спринт 4
+Заказы и OrderItems (CRUD)
+Mock-платежи (создание платежного намерения с client_secret)
+Публичный вывод данных по магазину
 
-Middleware-проверка токена для защищенных маршрутов
+Структура проекта
+src/
+ ├─ config/
+ ├─ middleware/
+ ├─ modules/
+ │   ├─ auth/
+ │   ├─ users/
+ │   ├─ brands/
+ │   ├─ categories/
+ │   ├─ products/
+ │   ├─ pages/
+ │   ├─ templates/
+ │   ├─ orders/
+ │   ├─ payments/
+ │   └─ public/
+ ├─ uploads/
+ ├─ app.ts
+ └─ server.ts
 
-Роли пользователей: USER и ADMIN
-
-2. Управление пользователями (административная панель)
-
-Маршруты доступны только пользователям с ролью ADMIN.
-
-Функции:
-
-Получение списка пользователей с пагинацией: GET /api/admin/users
-
-Изменение роли пользователя: PUT /api/admin/users/{id}
-
-3. Бренды
-
-Поддерживается полный CRUD для производителей товаров.
-
-Функции:
-
-Получение списка брендов: GET /api/brands
-
-Создание нового бренда: POST /api/brands
-
-Изменение бренда: PUT /api/brands/{id}
-
-Удаление бренда: DELETE /api/brands/{id}
-
-Загрузка логотипов производителей
-
-4. Категории каталога
-
-Реализованы операции с категориями, включая дерево категорий.
-
-Функции:
-
-CRUD для категорий: GET, POST, PUT, DELETE /api/categories
-
-Получение дерева категорий: GET /api/categories/tree
-
-5. Товары
-
-Реализованы операции с товарами, поддерживается загрузка изображений и мягкое удаление.
-
-Функции:
-
-Получение списка товаров: GET /api/products
-
-Создание нового товара: POST /api/products
-
-Изменение товара: PUT /api/products/{id}
-
-Мягкое удаление товара: DELETE /api/products/{id}
-
-Загрузка одного или нескольких изображений
-
-Используемые технологии
-Технология	Назначение
-Node.js	Серверная платформа
-TypeScript	Статическая типизация
-Express	Web-фреймворк
-Prisma	ORM для работы с PostgreSQL
-PostgreSQL	Реляционная база данных
-JWT (JSON Web Token)	Авторизация
-Multer	Загрузка файлов
-
-Инструкция по запуску
-1. Клонирование проекта
-git clone https://github.com/Edward-Vergil/uni-shop-backend.git
-cd uni-shop-backend
+Запуск проекта
+1. Установка зависимостей
 npm install
 
-2. Создание файла окружения .env
+2. Файл окружения .env
+Необходимо создать .env или использовать .env.example.
 
-Создать файл .env и указать следующие переменные:
-
-DATABASE_URL="postgresql://postgres:your_password@localhost:5432/uni_shop"
-JWT_SECRET="your_secret_key"
+Пример:
+DATABASE_URL="postgresql://postgres:password@localhost:5432/uni_shop?schema=public"
+JWT_SECRET="secret"
 PORT=4000
 
-3. Миграции базы данных
+3. Настройка PostgreSQL
+Проект ожидает базу данных:
+host: localhost
+port: 5432
+database: uni_shop
+
+4. Применение миграций Prisma
 npx prisma migrate dev
 
-4. Запуск проекта
+5. Генерация Prisma Client
+npx prisma generate
+
+6. Запуск сервера
 npm run dev
+
+По умолчанию сервер доступен на: http://localhost:4000
+
+Аутентификация
+Аутентификация осуществляется через JWT.
+
+Точки входа:
+POST /api/auth/register
+POST /api/auth/login
+
+Передача токена:
+Authorization: Bearer <token>
+
+Основные API-модули
+Пользователи (администрирование)
+GET /api/admin/users
+PUT /api/admin/users/:id
+
+Бренды
+GET /api/brands
+POST /api/brands
+PUT /api/brands/:id
+DELETE /api/brands/:id
+
+Категории
+GET /api/categories
+GET /api/categories/tree
+POST /api/categories
+PUT /api/categories/:id
+DELETE /api/categories/:id
+
+Товары
+GET /api/products
+POST /api/products
+PUT /api/products/:id
+DELETE /api/products/:id   (soft delete)
+
+Страницы магазина
+GET /api/pages
+POST /api/pages
+PUT /api/pages/:id
+POST /api/pages/:id/publish
+
+Шаблоны
+GET /api/templates
+
+Заказы
+GET /api/orders
+POST /api/orders
+PUT /api/orders/:id
+
+Платежи (mock)
+POST /api/payments/create-intent
+
+Ответ:
+{ "client_secret": "mock_client_secret_<id>" }
+
+Публичное API
+GET /api/public/store/:userId
+GET /api/public/products?storeId=...
+
+Загрузка файлов
+
+Проект содержит mock-endpoint для загрузки файлов:
+POST /api/uploads
+
+
+Ответ:
+{ "message": "Upload endpoint works (stub)" }
+
+Конфигурация Git
+Файл .gitignore должен содержать:
+node_modules
+.env
+dist
+
+Файл .env.example должен быть включен в репозиторий.
